@@ -251,6 +251,7 @@ typedef int pid_t;
 
 /* For Windows the Python core is in a DLL by default.  Test
 Py_NO_ENABLE_SHARED to find out.  Also support MS_NO_COREDLL for b/w compat */
+#define Py_NO_ENABLE_SHARED
 #if !defined(MS_NO_COREDLL) && !defined(Py_NO_ENABLE_SHARED)
 #       define Py_ENABLE_SHARED 1 /* standard symbol for shared library */
 #       define MS_COREDLL       /* deprecated old symbol */
@@ -276,6 +277,14 @@ Py_NO_ENABLE_SHARED to find out.  Also support MS_NO_COREDLL for b/w compat */
 #                       endif /* _DEBUG */
 #               endif /* _MSC_VER */
 #       endif /* Py_BUILD_CORE */
+#else
+        /* So MSVC users need not specify the .lib file in their own config */
+#       pragma comment(lib, "version.lib")
+#       pragma comment(lib, "shlwapi.lib")
+#       pragma comment(lib, "ws2_32.lib")
+#       if Py_WINVER > 0x0601
+#           pragma comment(lib, "pathcch.lib")
+#       endif /* Py_WINVER */
 #endif /* MS_COREDLL */
 
 #if defined(MS_WIN64)
