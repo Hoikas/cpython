@@ -924,6 +924,7 @@ cleanup:
     return ret;
 }
 
+#if 0
 typedef struct {
     LPPROC_THREAD_ATTRIBUTE_LIST attribute_list;
     LPHANDLE handle_list;
@@ -1150,6 +1151,20 @@ cleanup:
 
     return ret;
 }
+#else
+static PyObject*
+_winapi_CreateProcess_impl(PyObject* module,
+    const Py_UNICODE* application_name,
+    PyObject* command_line, PyObject* proc_attrs,
+    PyObject* thread_attrs, BOOL inherit_handles,
+    DWORD creation_flags, PyObject* env_mapping,
+    const Py_UNICODE* current_directory,
+    PyObject* startup_info)
+{
+    PyErr_Format(PyExc_NotImplementedError, "CreateProcess removed for Windows XP support");
+    return NULL;
+}
+#endif
 
 /*[clinic input]
 _winapi.DuplicateHandle -> HANDLE

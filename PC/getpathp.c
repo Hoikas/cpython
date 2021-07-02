@@ -258,6 +258,7 @@ static PPathCchCombineEx _PathCchCombineEx;
 static void
 join(wchar_t *buffer, const wchar_t *stuff)
 {
+#if 0
     if (_PathCchCombineEx_Initialized == 0) {
         HMODULE pathapi = LoadLibraryExW(L"api-ms-win-core-path-l1-1-0.dll", NULL,
                                          LOAD_LIBRARY_SEARCH_SYSTEM32);
@@ -279,6 +280,11 @@ join(wchar_t *buffer, const wchar_t *stuff)
             Py_FatalError("buffer overflow in getpathp.c's join()");
         }
     }
+#else
+    if (!PathCombineW(buffer, buffer, stuff)) {
+        Py_FatalError("buffer overflow in getpathp.c's join()");
+    }
+#endif
 }
 
 static int _PathCchCanonicalizeEx_Initialized = 0;
@@ -291,6 +297,7 @@ static PPathCchCanonicalizeEx _PathCchCanonicalizeEx;
 static PyStatus
 canonicalize(wchar_t *buffer, const wchar_t *path)
 {
+#if 0
     if (buffer == NULL) {
         return _PyStatus_NO_MEMORY();
     }
@@ -317,7 +324,12 @@ canonicalize(wchar_t *buffer, const wchar_t *path)
             return INIT_ERR_BUFFER_OVERFLOW();
         }
     }
+#else
+    if (!PathCanonicalizeW(buffer, path)) {
+        return INIT_ERR_BUFFER_OVERFLOW();
+    }
     return _PyStatus_OK();
+#endif
 }
 
 
@@ -1147,6 +1159,10 @@ _Py_CheckPython3(void)
     }
     python3_checked = 1;
 
+    /* all this stuff doesn't work in Windows XP. */
+    /* but, this is Uru. We don't use the limited API at all. */
+    /* so BEGONE! */
+#if 0
     /* If there is a python3.dll next to the python3y.dll,
        use that DLL */
     if (!get_dllpath(py3path)) {
@@ -1172,5 +1188,6 @@ _Py_CheckPython3(void)
         join(py3path, L"DLLs\\" PY3_DLLNAME);
         hPython3 = LoadLibraryExW(py3path, NULL, LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);
     }
+#endif
     return hPython3 != NULL;
 }

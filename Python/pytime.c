@@ -770,7 +770,8 @@ pymonotonic(_PyTime_t *tp, _Py_clock_info_t *info, int raise)
 
     assert(info == NULL || raise);
 
-    ticks = GetTickCount64();
+    /* Yikes... This will wrap every 49.7 days. Do we care that much for Uru? */
+    ticks = GetTickCount();
     Py_BUILD_ASSERT(sizeof(ticks) <= sizeof(_PyTime_t));
     t = (_PyTime_t)ticks;
 
@@ -787,7 +788,7 @@ pymonotonic(_PyTime_t *tp, _Py_clock_info_t *info, int raise)
     if (info) {
         DWORD timeAdjustment, timeIncrement;
         BOOL isTimeAdjustmentDisabled, ok;
-        info->implementation = "GetTickCount64()";
+        info->implementation = "GetTickCount()";
         info->monotonic = 1;
         ok = GetSystemTimeAdjustment(&timeAdjustment, &timeIncrement,
                                      &isTimeAdjustmentDisabled);

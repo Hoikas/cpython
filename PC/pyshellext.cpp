@@ -1,10 +1,7 @@
 // Support back to Vista
+#if 0
 #define _WIN32_WINNT _WIN32_WINNT_VISTA
 #include <sdkddkver.h>
-
-// Use WRL to define a classic COM class
-#define __WRL_CLASSIC_COM__
-#include <wrl.h>
 
 #include <windows.h>
 #include <shlobj.h>
@@ -608,3 +605,4 @@ STDAPI_(BOOL) DllMain(_In_opt_ HINSTANCE hinst, DWORD reason, _In_opt_ void*) {
     }
     return TRUE;
 }
+#endif

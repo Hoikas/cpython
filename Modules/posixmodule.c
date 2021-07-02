@@ -1625,7 +1625,7 @@ win32_wchdir(LPCWSTR path)
 */
 #define HAVE_STAT_NSEC 1
 #define HAVE_STRUCT_STAT_ST_FILE_ATTRIBUTES 1
-#define HAVE_STRUCT_STAT_ST_REPARSE_TAG 1
+/* #define HAVE_STRUCT_STAT_ST_REPARSE_TAG 1 */
 
 static void
 find_data_to_file_info(WIN32_FIND_DATAW *pFileData,
@@ -1682,6 +1682,8 @@ static int
 win32_xstat_impl(const wchar_t *path, struct _Py_stat_struct *result,
                  BOOL traverse)
 {
+    /* Too much Vista era stuff. Who needs stat() in Uru? */
+#if 0
     HANDLE hFile;
     BY_HANDLE_FILE_INFORMATION fileInfo;
     FILE_ATTRIBUTE_TAG_INFO tagInfo = { 0 };
@@ -1857,6 +1859,9 @@ cleanup:
     }
 
     return retval;
+#else
+    return -1;
+#endif
 }
 
 static int
@@ -3953,6 +3958,7 @@ static PyObject *
 os__getfinalpathname_impl(PyObject *module, path_t *path)
 /*[clinic end generated code: output=621a3c79bc29ebfa input=2b6b6c7cbad5fb84]*/
 {
+#if 0
     HANDLE hFile;
     wchar_t buf[MAXPATHLEN], *target_path = buf;
     int buf_size = Py_ARRAY_LENGTH(buf);
@@ -4016,6 +4022,10 @@ cleanup:
     }
     CloseHandle(hFile);
     return result;
+#else
+    PyErr_SetString(PyExc_NotImplementedError, "Windows XP");
+    return NULL;
+#endif
 }
 
 
@@ -8219,6 +8229,7 @@ os_symlink_impl(PyObject *module, path_t *src, path_t *dst,
 
 #ifdef MS_WINDOWS
 
+#if 0
     if (windows_has_symlink_unprivileged_flag) {
         /* Allow non-admin symlinks if system allows it. */
         flags |= SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE;
@@ -8262,6 +8273,10 @@ os_symlink_impl(PyObject *module, path_t *src, path_t *dst,
 
     if (!result)
         return path_error2(src, dst);
+#endif
+
+    PyErr_SetString(PyExc_NotImplementedError, "symlinks removed for Windows XP");
+    return NULL;
 
 #else
 
@@ -13694,8 +13709,11 @@ error:
  * on win32
  */
 
+/* DllCookie added in Vista. Nuking. */
+#if 0
 typedef DLL_DIRECTORY_COOKIE (WINAPI *PAddDllDirectory)(PCWSTR newDirectory);
 typedef BOOL (WINAPI *PRemoveDllDirectory)(DLL_DIRECTORY_COOKIE cookie);
+#endif
 
 /*[clinic input]
 os._add_dll_directory
@@ -13716,6 +13734,8 @@ static PyObject *
 os__add_dll_directory_impl(PyObject *module, path_t *path)
 /*[clinic end generated code: output=80b025daebb5d683 input=1de3e6c13a5808c8]*/
 {
+    /* DllCookie added in Vista. Nuking. */
+#if 0
     HMODULE hKernel32;
     PAddDllDirectory AddDllDirectory;
     DLL_DIRECTORY_COOKIE cookie = 0;
@@ -13743,6 +13763,10 @@ os__add_dll_directory_impl(PyObject *module, path_t *path)
     }
 
     return PyCapsule_New(cookie, "DLL directory cookie", NULL);
+#else
+    PySys_Audit("os.add_dll_directory", "(O)", path->object);
+    Py_RETURN_NONE;
+#endif
 }
 
 /*[clinic input]
@@ -13761,6 +13785,8 @@ static PyObject *
 os__remove_dll_directory_impl(PyObject *module, PyObject *cookie)
 /*[clinic end generated code: output=594350433ae535bc input=c1d16a7e7d9dc5dc]*/
 {
+    /* DllCookie added in Vista. Nuking. */
+#if 0
     HMODULE hKernel32;
     PRemoveDllDirectory RemoveDllDirectory;
     DLL_DIRECTORY_COOKIE cookieValue;
@@ -13795,8 +13821,9 @@ os__remove_dll_directory_impl(PyObject *module, PyObject *cookie)
     if (PyCapsule_SetName(cookie, NULL)) {
         return NULL;
     }
-
+#else
     Py_RETURN_NONE;
+#endif
 }
 
 #endif
@@ -14493,7 +14520,7 @@ all_ins(PyObject *m)
     if (PyModule_AddIntConstant(m, "_COPYFILE_DATA", COPYFILE_DATA)) return -1;
 #endif
 
-#ifdef MS_WINDOWS
+#if 0
     if (PyModule_AddIntConstant(m, "_LOAD_LIBRARY_SEARCH_DEFAULT_DIRS", LOAD_LIBRARY_SEARCH_DEFAULT_DIRS)) return -1;
     if (PyModule_AddIntConstant(m, "_LOAD_LIBRARY_SEARCH_APPLICATION_DIR", LOAD_LIBRARY_SEARCH_APPLICATION_DIR)) return -1;
     if (PyModule_AddIntConstant(m, "_LOAD_LIBRARY_SEARCH_SYSTEM32", LOAD_LIBRARY_SEARCH_SYSTEM32)) return -1;

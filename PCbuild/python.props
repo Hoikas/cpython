@@ -11,11 +11,13 @@
 
     We set BasePlatformToolset for ICC's benefit, it's otherwise ignored.
     -->
-    <BasePlatformToolset Condition="'$(BasePlatformToolset)' == '' and ('$(MSBuildToolsVersion)' == '16.0' or '$(VisualStudioVersion)' == '16.0')">v142</BasePlatformToolset>
-    <BasePlatformToolset Condition="'$(BasePlatformToolset)' == '' and ('$(MSBuildToolsVersion)' == '15.0' or '$(VisualStudioVersion)' == '15.0')">v141</BasePlatformToolset>
-    <BasePlatformToolset Condition="'$(BasePlatformToolset)' == '' and '$(VCTargetsPath14)' != ''">v140</BasePlatformToolset>
-    <BasePlatformToolset Condition="'$(BasePlatformToolset)' == '' and '$(VCTargetsPath12)' != ''">v120</BasePlatformToolset>
-    <BasePlatformToolset Condition="'$(BasePlatformToolset)' == '' and '$(VCTargetsPath11)' != ''">v110</BasePlatformToolset>
+    <!-- NOTE: VS 16.0 (aka Visual Studio 2019) does not have an XP toolset, so use 2017's. It's ABI compatible. -->
+    <BasePlatformToolset Condition="'$(BasePlatformToolset)' == '' and ('$(MSBuildToolsVersion)' == '16.0' or '$(VisualStudioVersion)' == '16.0')">v141_xp</BasePlatformToolset>
+    <BasePlatformToolset Condition="'$(BasePlatformToolset)' == '' and ('$(MSBuildToolsVersion)' == '15.0' or '$(VisualStudioVersion)' == '15.0')">v141_xp</BasePlatformToolset>
+    <BasePlatformToolset Condition="'$(BasePlatformToolset)' == '' and '$(VCTargetsPath14)' != ''">v140_xp</BasePlatformToolset>
+    <BasePlatformToolset Condition="'$(BasePlatformToolset)' == '' and '$(VCTargetsPath12)' != ''">v120_xp</BasePlatformToolset>
+    <BasePlatformToolset Condition="'$(BasePlatformToolset)' == '' and '$(VCTargetsPath11)' != ''">v110_xp</BasePlatformToolset>
+    <!-- Already Windows XP compatible -->
     <BasePlatformToolset Condition="'$(BasePlatformToolset)' == '' and '$(VCTargetsPath10)' != ''">v100</BasePlatformToolset>
 
     <PlatformToolset Condition="'$(PlatformToolset)' == ''">$(BasePlatformToolset)</PlatformToolset>
